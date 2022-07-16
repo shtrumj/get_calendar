@@ -1,8 +1,12 @@
-from exchangelib import DELEGATE, Account, Credentials, Configuration, CalendarItem, ExtendedProperty, Folder, FolderCollection, EWSDateTime, EWSTimeZone
+from exchangelib import DELEGATE, Account, Credentials, Configuration, CalendarItem, ExtendedProperty, Folder, \
+    FolderCollection, EWSDateTime, EWSTimeZone
+from dateutil.tz import gettz
+
+from zoneinfo import ZoneInfo
 from exchangelib import EWSTimeZone, EWSDateTime, EWSDate, UTC, UTC_NOW
 import time
 from datetime import datetime
-import datetime
+import datetime as dt
 from datetime import timedelta
 import dateutil.tz
 import pytz
@@ -10,7 +14,11 @@ import pytz
 
 
 from exchangelib.ewsdatetime import EWSDateTime
+
 # year, month, day = 2022, 7, 16
+dateutil_tz = gettz('America/Chicago')
+tz_name = '/'.join(dateutil_tz._filename.split('/')[-2:])
+
 creds = Credentials(
     username="trot\\jonathan",
     password="Gib$0n579!"
@@ -25,44 +33,38 @@ account = Account(
     access_type=DELEGATE
 )
 
-try :
+try:
     import zoneinfo
 except ImportError:
     from backports import zoneinfo
 from exchangelib import EWSTimeZone, EWSDateTime, EWSDate, UTC, UTC_NOW
 
-
 tz = EWSTimeZone('Asia/Jerusalem')
-# start = account.default_timezone(EWSDateTime.now())
 
 localized_dt = EWSDateTime(2017, 9, 5, 8, 30, tzinfo=tz)
 right_now = EWSDateTime.now(tz)
 
-# print(right_now)
 today = EWSDate.today()
-# end = start + datetime.timedelta(days=1)
-#
+
 root = account.public_folders_root
 pubs = (root.glob('*סידור עבודה'))
-# print(pubs)
 
-# specificFolder = list(account.public_folders_root.glob('סידור עבודה'))[0]
-# print(specificFolder.count())
+# start = EWSDateTime(2022, 7, 14, 8, 30, tzinfo=EWSTimeZone('Asia/Jerusalem'))
+# start =EWSDateTime(2022, 7, 14, tzinfo=EWSTimeZone(tz_name))
+# end = EWSDateTime(2022, 7, 16, tzinfo=EWSTimeZone(tz_name))
 
-# for pub in pubs:
-#     items_for_2022 = pub.filter(start__range=(
-#         EWSDateTime(2022, 7, 14, 8, 30, tzinfo=EWSTimeZone('Europe/Copenhagen')),
-#         EWSDateTime(2022, 7, 16, 8, 30, tzinfo=EWSTimeZone('Europe/Copenhagen'))
-#     ))
-#
 
-start = EWSDateTime(2022, 7, 14, 8, 30, tzinfo=EWSTimeZone('Europe/Copenhagen'))
-end = EWSDateTime(2022, 7, 16, 8, 30, tzinfo=EWSTimeZone('Europe/Copenhagen'))
+# start = EWSDateTime.strptime("2022-7-14", "%Y-%m-%d")
+
+
+# end = EWSDateTime.strptime("2022-07-16", "%Y-%m-%d")
+# print(start)
+
+start = account.default_timezone
 
 for occurrence in pubs.view(start=start, end=end):
     print(occurrence.start, occurrence.subject)
 
-
-# for items in items_for_2022:
-#     print(items['sunject'])
-#     # items = account.pub.calendar.filter(start=start, end=end)
+# dt_start_time = dt.datetime.strptime('2022-03-13', '%Y-%m-%d')
+#
+# print(EWSDateTime.from_datetime(dt_start_time).astimezone(tz))
