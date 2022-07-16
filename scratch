@@ -1,0 +1,3 @@
+items_for_2022 = my_calendar.filter(start__range=(
+    tz.localize(EWSDateTime(2022, 7, 1)),
+    tz.localize(EWSDateTime(2022, 7, 16))
